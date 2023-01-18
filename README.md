@@ -15,7 +15,7 @@ Dataset
 
 We were able to find another project that used this dataset for a completely different task (hospital readmissions involving pulmonary disorders) (see link below). To our knowledge, we are engaging in a unique exercise that has not been attempted or has not been made publicly available. 
 
-[Dataset](https://www.cms.gov/Research-Statistics-Data-and-Systems/Downloadable-Public-Use-Files/SynPUFs/DE_Syn_PUF) | [Existing Project](https://www.ijert.org/comparison-of-different-machine-learning-models-for-predicting-chronic-obstructive-pulmonary-disorder-hospital-readmissions)
+[Dataset](https://www.cms.gov/Research-Statistics-Data-and-Systems/Downloadable-Public-Use-Files/SynPUFs/DE_Syn_PUF) | [Existing Project](https://www.ijert.org/comparison-of-different-machine-learning-models-for-predicting-chronic-obstructive-pulmonary-disorder-hospital-readmissions) [Data Descriptions](https://www.cms.gov/files/document/de-10-codebook.pdf-0)
 
 Unsupervised Task
 
