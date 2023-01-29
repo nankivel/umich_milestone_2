@@ -35,6 +35,12 @@ def get_data(dataset):
         file, _ = urllib.request.urlretrieve(url)
         _df = read_from_zip(file)
         df = pd.concat([df, _df])
+    # convert date fields to datetime type
+    for c in [c for c in df.columns if "_DT" in c]:
+        df[c] = pd.to_datetime(df[c])
+    # convert amount fields to float type
+    for c in [c for c in df.columns if "_AMT" in c]:
+        df[c] = df[c].astype(float)
     return df
 
 
@@ -45,7 +51,7 @@ def read_from_zip(file):
     content = file.read()
     s = str(content, "utf-8")
     data = StringIO(s)
-    return pd.read_csv(data)
+    return pd.read_csv(data, dtype=str)
 
 
 def read_pickle_or_none(FILE) -> pd.DataFrame:
