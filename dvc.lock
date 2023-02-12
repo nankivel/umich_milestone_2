@@ -1,11 +1,23 @@
 schema: '2.0'
 stages:
-  ingest:
-    cmd: python src/ingest.py
-    outs:
+  prepare:
+    cmd: python src/prepare.py data/raw/Inpatient.pkl data/raw/Outpatient.pkl
+    deps:
     - path: data/raw/Inpatient.pkl
       md5: d09bd9d99bc4da62cb25cce32ad91ce4
       size: 909877739
     - path: data/raw/Outpatient.pkl
       md5: 640ce12175969567bce92114051a1ceb
       size: 10426565997
+    - path: src/prepare.py
+      md5: f3c80be8257019298ab77a859d492257
+      size: 1766
+    params:
+      params.yaml:
+        prepare.random_seed: 42
+        prepare.test_ratio: 0.2
+    outs:
+    - path: data/prepared
+      md5: d0d6c6f5c5f3d06c33bcec0a70b3abe6.dir
+      size: 12351541338
+      nfiles: 2

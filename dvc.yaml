@@ -1,6 +1,12 @@
 stages:
-  ingest:
-    cmd: python src/ingest.py
+  prepare:
+    cmd: python src/prepare.py data/raw/Inpatient.pkl data/raw/Outpatient.pkl
+    deps: 
+      - data/raw/Inpatient.pkl
+      - data/raw/Outpatient.pkl
+      - src/prepare.py
+    params:
+    - prepare.test_ratio
+    - prepare.random_seed
     outs:
-    - data/raw/Inpatient.pkl
-    - data/raw/Outpatient.pkl
+    - data/prepared

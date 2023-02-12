@@ -1,62 +1,159 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 import pickle
-import ingest
+from dataset import get_cache_data
 
-outpatient = ingest.get_cache_data("Outpatient", "Outpatient.pkl")
+outpatient = get_cache_data("Outpatient", "Outpatient.pkl")
 
-outpatient.dropna(subset=['CLM_PMT_AMT'], inplace=True)
-outpatient.dropna(subset=['CLM_FROM_DT', 'CLM_THRU_DT'], inplace=True)
-outpatient.dropna(subset=['ICD9_PRCDR_CD_1', 'ICD9_PRCDR_CD_2', 
- 'ICD9_PRCDR_CD_3', 'ICD9_PRCDR_CD_4', 'ICD9_PRCDR_CD_5', 'ICD9_PRCDR_CD_6'], inplace=True, how='all')
-outpatient.dropna(subset=['HCPCS_CD_1', 
- 'HCPCS_CD_2', 'HCPCS_CD_3', 'HCPCS_CD_4', 'HCPCS_CD_5', 'HCPCS_CD_6', 
- 'HCPCS_CD_7', 'HCPCS_CD_8', 'HCPCS_CD_9',
- 'HCPCS_CD_10', 'HCPCS_CD_11', 'HCPCS_CD_12', 'HCPCS_CD_13', 'HCPCS_CD_14',
- 'HCPCS_CD_15', 'HCPCS_CD_16', 'HCPCS_CD_17', 'HCPCS_CD_18', 'HCPCS_CD_19',
- 'HCPCS_CD_20', 'HCPCS_CD_21', 'HCPCS_CD_22', 'HCPCS_CD_23', 'HCPCS_CD_24',
- 'HCPCS_CD_25', 'HCPCS_CD_26', 'HCPCS_CD_27', 'HCPCS_CD_28', 'HCPCS_CD_29',
- 'HCPCS_CD_30', 'HCPCS_CD_31', 'HCPCS_CD_32', 'HCPCS_CD_33', 'HCPCS_CD_34',
- 'HCPCS_CD_35', 'HCPCS_CD_36', 'HCPCS_CD_37', 'HCPCS_CD_38', 'HCPCS_CD_39',
- 'HCPCS_CD_40', 'HCPCS_CD_41', 'HCPCS_CD_42', 'HCPCS_CD_43', 'HCPCS_CD_44',
- 'HCPCS_CD_45'], inplace=True, how='all')
+outpatient.dropna(subset=["CLM_PMT_AMT"], inplace=True)
+outpatient.dropna(subset=["CLM_FROM_DT", "CLM_THRU_DT"], inplace=True)
+outpatient.dropna(
+    subset=[
+        "ICD9_PRCDR_CD_1",
+        "ICD9_PRCDR_CD_2",
+        "ICD9_PRCDR_CD_3",
+        "ICD9_PRCDR_CD_4",
+        "ICD9_PRCDR_CD_5",
+        "ICD9_PRCDR_CD_6",
+    ],
+    inplace=True,
+    how="all",
+)
+outpatient.dropna(
+    subset=[
+        "HCPCS_CD_1",
+        "HCPCS_CD_2",
+        "HCPCS_CD_3",
+        "HCPCS_CD_4",
+        "HCPCS_CD_5",
+        "HCPCS_CD_6",
+        "HCPCS_CD_7",
+        "HCPCS_CD_8",
+        "HCPCS_CD_9",
+        "HCPCS_CD_10",
+        "HCPCS_CD_11",
+        "HCPCS_CD_12",
+        "HCPCS_CD_13",
+        "HCPCS_CD_14",
+        "HCPCS_CD_15",
+        "HCPCS_CD_16",
+        "HCPCS_CD_17",
+        "HCPCS_CD_18",
+        "HCPCS_CD_19",
+        "HCPCS_CD_20",
+        "HCPCS_CD_21",
+        "HCPCS_CD_22",
+        "HCPCS_CD_23",
+        "HCPCS_CD_24",
+        "HCPCS_CD_25",
+        "HCPCS_CD_26",
+        "HCPCS_CD_27",
+        "HCPCS_CD_28",
+        "HCPCS_CD_29",
+        "HCPCS_CD_30",
+        "HCPCS_CD_31",
+        "HCPCS_CD_32",
+        "HCPCS_CD_33",
+        "HCPCS_CD_34",
+        "HCPCS_CD_35",
+        "HCPCS_CD_36",
+        "HCPCS_CD_37",
+        "HCPCS_CD_38",
+        "HCPCS_CD_39",
+        "HCPCS_CD_40",
+        "HCPCS_CD_41",
+        "HCPCS_CD_42",
+        "HCPCS_CD_43",
+        "HCPCS_CD_44",
+        "HCPCS_CD_45",
+    ],
+    inplace=True,
+    how="all",
+)
 
-column_sets_dict = {'clm_dates': ['CLM_FROM_DT', 'CLM_THRU_DT'],
-'PRDCR_CD': ['ICD9_PRCDR_CD_1', 'ICD9_PRCDR_CD_2', 'ICD9_PRCDR_CD_3',
- 'ICD9_PRCDR_CD_4', 'ICD9_PRCDR_CD_5', 'ICD9_PRCDR_CD_6'],
-'HCPCS_CD': ['HCPCS_CD_1', 'HCPCS_CD_2', 'HCPCS_CD_3', 'HCPCS_CD_4',
- 'HCPCS_CD_5', 'HCPCS_CD_6', 'HCPCS_CD_7', 'HCPCS_CD_8', 'HCPCS_CD_9',
- 'HCPCS_CD_10', 'HCPCS_CD_11', 'HCPCS_CD_12', 'HCPCS_CD_13', 'HCPCS_CD_14',
- 'HCPCS_CD_15', 'HCPCS_CD_16', 'HCPCS_CD_17', 'HCPCS_CD_18', 'HCPCS_CD_19',
- 'HCPCS_CD_20', 'HCPCS_CD_21', 'HCPCS_CD_22', 'HCPCS_CD_23', 'HCPCS_CD_24',
- 'HCPCS_CD_25', 'HCPCS_CD_26', 'HCPCS_CD_27', 'HCPCS_CD_28', 'HCPCS_CD_29',
- 'HCPCS_CD_30', 'HCPCS_CD_31', 'HCPCS_CD_32', 'HCPCS_CD_33', 'HCPCS_CD_34',
- 'HCPCS_CD_35', 'HCPCS_CD_36', 'HCPCS_CD_37', 'HCPCS_CD_38', 'HCPCS_CD_39',
- 'HCPCS_CD_40', 'HCPCS_CD_41', 'HCPCS_CD_42', 'HCPCS_CD_43', 'HCPCS_CD_44',
- 'HCPCS_CD_45']}
+column_sets_dict = {
+    "clm_dates": ["CLM_FROM_DT", "CLM_THRU_DT"],
+    "PRDCR_CD": [
+        "ICD9_PRCDR_CD_1",
+        "ICD9_PRCDR_CD_2",
+        "ICD9_PRCDR_CD_3",
+        "ICD9_PRCDR_CD_4",
+        "ICD9_PRCDR_CD_5",
+        "ICD9_PRCDR_CD_6",
+    ],
+    "HCPCS_CD": [
+        "HCPCS_CD_1",
+        "HCPCS_CD_2",
+        "HCPCS_CD_3",
+        "HCPCS_CD_4",
+        "HCPCS_CD_5",
+        "HCPCS_CD_6",
+        "HCPCS_CD_7",
+        "HCPCS_CD_8",
+        "HCPCS_CD_9",
+        "HCPCS_CD_10",
+        "HCPCS_CD_11",
+        "HCPCS_CD_12",
+        "HCPCS_CD_13",
+        "HCPCS_CD_14",
+        "HCPCS_CD_15",
+        "HCPCS_CD_16",
+        "HCPCS_CD_17",
+        "HCPCS_CD_18",
+        "HCPCS_CD_19",
+        "HCPCS_CD_20",
+        "HCPCS_CD_21",
+        "HCPCS_CD_22",
+        "HCPCS_CD_23",
+        "HCPCS_CD_24",
+        "HCPCS_CD_25",
+        "HCPCS_CD_26",
+        "HCPCS_CD_27",
+        "HCPCS_CD_28",
+        "HCPCS_CD_29",
+        "HCPCS_CD_30",
+        "HCPCS_CD_31",
+        "HCPCS_CD_32",
+        "HCPCS_CD_33",
+        "HCPCS_CD_34",
+        "HCPCS_CD_35",
+        "HCPCS_CD_36",
+        "HCPCS_CD_37",
+        "HCPCS_CD_38",
+        "HCPCS_CD_39",
+        "HCPCS_CD_40",
+        "HCPCS_CD_41",
+        "HCPCS_CD_42",
+        "HCPCS_CD_43",
+        "HCPCS_CD_44",
+        "HCPCS_CD_45",
+    ],
+}
+
 
 def isnan(x):
     return x != x
 
+
 def TFIDF_Matrix(df, columns):
-    #Takes in a dataframe, and a list of columns that comprise a "sentence"
-    #Returns a TFIDF matrix
+    # Takes in a dataframe, and a list of columns that comprise a "sentence"
+    # Returns a TFIDF matrix
 
     corpus = []
 
     if len(columns) > 1:
         values = df[columns].values.tolist()
         for sentence in values:
-            s = ''
+            s = ""
             for word in sentence:
                 if len(s) == 0:
                     if isnan(word):
-                        s = 'None'
+                        s = "None"
                     else:
                         s = str(word)
                 else:
                     if isnan(word):
-                        s += 'None'
+                        s += "None"
                     else:
                         s += str(word)
             corpus.append(s)
@@ -65,33 +162,44 @@ def TFIDF_Matrix(df, columns):
         values = df[columns].values.tolist()
         for word in values:
             if isnan(word[0]):
-                corpus.append('None')
+                corpus.append("None")
             else:
                 corpus.append(word[0])
-    
-    return  TfidfVectorizer(stop_words=['None']).fit_transform(corpus).todense()
+
+    return TfidfVectorizer(stop_words=["None"]).fit_transform(corpus).todense()
+
 
 def Date_Diff(df, columns):
-    #Takes in a dataframe, and a list of columns that are a start date and end date
-    #Returns the difference between the two dates
+    # Takes in a dataframe, and a list of columns that are a start date and end date
+    # Returns the difference between the two dates
 
     values = df[columns]
 
-    values['date_diff'] = (df[columns[1]] - df[columns[0]]) / np.timedelta64(1,'D')
+    values["date_diff"] = (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D")
 
-    return  np.array(values['date_diff'].values.tolist()).reshape(len(values),1)
-    
+    return np.array(values["date_diff"].values.tolist()).reshape(len(values), 1)
+
+
 def Passthrough(df, columns):
-    #Takes in a dataframe, and a list of columns that need to be turned into a list
-    #Returns list of values from columns
-    
+    # Takes in a dataframe, and a list of columns that need to be turned into a list
+    # Returns list of values from columns
+
     return np.array(df[columns].values.tolist())
+
 
 column_sets_matrix_dict = {}
 for key, value in column_sets_dict.items():
-    if key in ['provider', 'NPI', 'admit_code', 'claim_discharge_code', 'DGNS_CD', 'PRDCR_CD', 'HCPCS_CD']:
+    if key in [
+        "provider",
+        "NPI",
+        "admit_code",
+        "claim_discharge_code",
+        "DGNS_CD",
+        "PRDCR_CD",
+        "HCPCS_CD",
+    ]:
         column_sets_matrix_dict[key] = TFIDF_Matrix(outpatient, value)
-    elif key in ['clm_dates', 'admit_dates']:
+    elif key in ["clm_dates", "admit_dates"]:
         column_sets_matrix_dict[key] = Date_Diff(outpatient, value)
     else:
         column_sets_matrix_dict[key] = Passthrough(outpatient, value)
