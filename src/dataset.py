@@ -14,7 +14,9 @@ logging.basicConfig(
 
 
 def get_cache_data(
-    dataset, local_cache_raw=pathlib.Path(os.path.join("data", "raw")).expanduser()
+    dataset,
+    local_cache_raw=pathlib.Path(os.path.join("data", "raw")).expanduser(),
+    get_sample=False,
 ):
     os.makedirs(local_cache_raw, exist_ok=True)
     dataset = dataset.title()
@@ -23,8 +25,14 @@ def get_cache_data(
     ).expanduser()
     if read_pickle_or_none(local_cache_path) is None:
         df = get_data(dataset)
-        logging.info(f"Writing data to local cache file {local_cache_path}")
-        df.to_pickle(local_cache_path)
+        if get_sample:
+            logging.info(
+                f"Writing sample of data to local cache file {local_cache_path}"
+            )
+            df.sample(frac=0.05, random_state=42).to_pickle(local_cache_path)
+        else:
+            logging.info(f"Writing data to local cache file {local_cache_path}")
+            df.to_pickle(local_cache_path)
     else:
         logging.info(f"Reading local cache file {local_cache_path}")
         df = pd.read_pickle(local_cache_path)
@@ -73,5 +81,5 @@ def read_pickle_or_none(FILE) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    get_cache_data("Inpatient")
-    get_cache_data("Outpatient")
+    get_cache_data("Inpatient", get_sample=True)
+    get_cache_data("Outpatient", get_sample=True)

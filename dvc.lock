@@ -4,14 +4,14 @@ stages:
     cmd: python src/prepare.py data/raw/Inpatient.pkl data/raw/Outpatient.pkl
     deps:
     - path: data/raw/Inpatient.pkl
-      md5: d09bd9d99bc4da62cb25cce32ad91ce4
-      size: 909877739
+      md5: 63f74ee7ea6c9114f11e9523804a30c6
+      size: 47058667
     - path: data/raw/Outpatient.pkl
-      md5: 640ce12175969567bce92114051a1ceb
-      size: 10426565997
+      md5: ce040afe556135492ad1e6a4c1a1a3a1
+      size: 539353562
     - path: src/prepare.py
-      md5: f3c80be8257019298ab77a859d492257
-      size: 1766
+      md5: cf3681cc0f1d8267dfefa03b8b1ef8b8
+      size: 1860
     params:
       params.yaml:
         prepare.random_seed: 42
