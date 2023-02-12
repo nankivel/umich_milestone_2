@@ -9,8 +9,14 @@ import pathlib
 logging.basicConfig(level=logging.INFO)
 
 
-def get_cache_data(dataset, local_cache_path):
-    local_cache_path = pathlib.Path(local_cache_path).expanduser()
+def get_cache_data(
+    dataset, local_cache_raw=pathlib.Path(os.path.join("data", "raw")).expanduser()
+):
+    os.makedirs(local_cache_raw, exist_ok=True)
+    dataset = dataset.title()
+    local_cache_path = pathlib.Path(
+        os.path.join(local_cache_raw, f"{dataset}.pkl")
+    ).expanduser()
     if read_pickle_or_none(local_cache_path) is None:
         df = get_data(dataset)
         logging.info(f"Writing data to local cache file {local_cache_path}")
@@ -62,6 +68,5 @@ def read_pickle_or_none(FILE) -> pd.DataFrame:
     return result
 
 
-if __name__ == "__main__":
-    get_cache_data("Inpatient", "~/Downloads/inpatient.pkl")
-    get_cache_data("Outpatient", "~/Downloads/outpatient.pkl")
+get_cache_data("Inpatient")
+get_cache_data("Outpatient")

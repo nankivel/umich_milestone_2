@@ -1,0 +1,6 @@
+stages:
+  ingest:
+    cmd: python src/ingest.py
+    outs:
+    - data/raw/Inpatient.pkl
+    - data/raw/Outpatient.pkl

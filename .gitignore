@@ -1,6 +1,3 @@
-# local data folder, data will be synced via DVC to S3 bucket
-/data
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
