@@ -17,8 +17,8 @@ logging.basicConfig(
 params = yaml.safe_load(open("params.yaml"))["prepare"]
 
 if len(sys.argv) != 2:
-    sys.stderr.write("Arguments error. Usage:\n")
-    sys.stderr.write("\tpython prepare.py data-file-outpatient\n")
+    logging.info("Arguments error. Usage:\n")
+    logging.info("\tpython prepare.py data-file-outpatient\n")
     sys.exit(1)
 
 try:
