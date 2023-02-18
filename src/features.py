@@ -4,7 +4,6 @@ import pickle
 from dataset import get_cache_data
 import yaml
 import logging
-import pathlib
 import sys
 import pandas as pd
 
@@ -13,8 +12,6 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-
-params = yaml.safe_load(open("params.yaml"))["features"]
 
 
 if len(sys.argv) != 2:
