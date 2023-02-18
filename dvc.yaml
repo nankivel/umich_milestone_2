@@ -1,8 +1,7 @@
 stages:
   prepare:
-    cmd: python src/prepare.py data/raw/Inpatient.pkl data/raw/Outpatient.pkl
+    cmd: python src/prepare.py data/raw/Outpatient.pkl
     deps: 
-      - data/raw/Inpatient.pkl
       - data/raw/Outpatient.pkl
       - src/prepare.py
     params:
@@ -10,3 +9,11 @@ stages:
     - prepare.random_seed
     outs:
     - data/prepared
+
+  features:
+    cmd: python src/features.py data/raw/Outpatient.pkl
+    deps: 
+      - data/raw/Outpatient.pkl
+      - src/features.py
+    outs:
+    - data/features/feature_vectors_dictionary.pkl
