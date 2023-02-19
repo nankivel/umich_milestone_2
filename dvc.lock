@@ -1,23 +1,33 @@
 schema: '2.0'
 stages:
   prepare:
-    cmd: python src/prepare.py data/raw/Inpatient.pkl data/raw/Outpatient.pkl
+    cmd: python src/prepare.py data/raw/Outpatient.pkl
     deps:
-    - path: data/raw/Inpatient.pkl
-      md5: 63f74ee7ea6c9114f11e9523804a30c6
-      size: 47058667
     - path: data/raw/Outpatient.pkl
-      md5: ce040afe556135492ad1e6a4c1a1a3a1
-      size: 539353562
+      md5: 1721bad7bf4a23512ea426f6cf21415e
+      size: 540434799
     - path: src/prepare.py
-      md5: cf3681cc0f1d8267dfefa03b8b1ef8b8
-      size: 1860
+      md5: 1b8f778b13346eeeff8701de5e7bf4b3
+      size: 3478
     params:
       params.yaml:
         prepare.random_seed: 42
         prepare.test_ratio: 0.2
     outs:
     - path: data/prepared
-      md5: 41b132db11e3d77f93bcf34e764fce2b.dir
-      size: 636571668
+      md5: 9d28d1a9fb02142aa5a08cb0bec6c6e8.dir
+      size: 136249
       nfiles: 2
+  features:
+    cmd: python src/features.py data/raw/Outpatient.pkl
+    deps:
+    - path: data/raw/Outpatient.pkl
+      md5: 1721bad7bf4a23512ea426f6cf21415e
+      size: 540434799
+    - path: src/features.py
+      md5: 8d1c0f6ef457c88f38adee1231232200
+      size: 4484
+    outs:
+    - path: data/features/feature_vectors_dictionary.pkl
+      md5: f4a0444509dde55c2b44b17aaa21d2fc
+      size: 37085561417

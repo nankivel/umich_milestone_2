@@ -13,6 +13,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+params = yaml.safe_load(open("params.yaml"))["features"]
 
 if len(sys.argv) != 2:
     logging.info("Arguments error. Usage:\n")
@@ -26,65 +27,6 @@ try:
 except Exception as err:
     logging.info(f"Unexpected {err=}, {type(err)=}")
 
-column_sets_dict = {
-    "clm_dates": ["CLM_FROM_DT", "CLM_THRU_DT"],
-    "PRDCR_CD": [
-        "ICD9_PRCDR_CD_1",
-        "ICD9_PRCDR_CD_2",
-        "ICD9_PRCDR_CD_3",
-        "ICD9_PRCDR_CD_4",
-        "ICD9_PRCDR_CD_5",
-        "ICD9_PRCDR_CD_6",
-    ],
-    "HCPCS_CD": [
-        "HCPCS_CD_1",
-        "HCPCS_CD_2",
-        "HCPCS_CD_3",
-        "HCPCS_CD_4",
-        "HCPCS_CD_5",
-        "HCPCS_CD_6",
-        "HCPCS_CD_7",
-        "HCPCS_CD_8",
-        "HCPCS_CD_9",
-        "HCPCS_CD_10",
-        "HCPCS_CD_11",
-        "HCPCS_CD_12",
-        "HCPCS_CD_13",
-        "HCPCS_CD_14",
-        "HCPCS_CD_15",
-        "HCPCS_CD_16",
-        "HCPCS_CD_17",
-        "HCPCS_CD_18",
-        "HCPCS_CD_19",
-        "HCPCS_CD_20",
-        "HCPCS_CD_21",
-        "HCPCS_CD_22",
-        "HCPCS_CD_23",
-        "HCPCS_CD_24",
-        "HCPCS_CD_25",
-        "HCPCS_CD_26",
-        "HCPCS_CD_27",
-        "HCPCS_CD_28",
-        "HCPCS_CD_29",
-        "HCPCS_CD_30",
-        "HCPCS_CD_31",
-        "HCPCS_CD_32",
-        "HCPCS_CD_33",
-        "HCPCS_CD_34",
-        "HCPCS_CD_35",
-        "HCPCS_CD_36",
-        "HCPCS_CD_37",
-        "HCPCS_CD_38",
-        "HCPCS_CD_39",
-        "HCPCS_CD_40",
-        "HCPCS_CD_41",
-        "HCPCS_CD_42",
-        "HCPCS_CD_43",
-        "HCPCS_CD_44",
-        "HCPCS_CD_45",
-    ],
-}
-
 
 def isnan(x):
     return x != x
@@ -93,34 +35,7 @@ def isnan(x):
 def TFIDF_Matrix(df, columns):
     # Takes in a dataframe, and a list of columns that comprise a "sentence"
     # Returns a TFIDF matrix
-
-    corpus = []
-
-    if len(columns) > 1:
-        values = df[columns].values.tolist()
-        for sentence in values:
-            s = ""
-            for word in sentence:
-                if len(s) == 0:
-                    if isnan(word):
-                        s = "None"
-                    else:
-                        s = str(word)
-                else:
-                    if isnan(word):
-                        s += "None"
-                    else:
-                        s += str(word)
-            corpus.append(s)
-
-    else:
-        values = df[columns].values.tolist()
-        for word in values:
-            if isnan(word[0]):
-                corpus.append("None")
-            else:
-                corpus.append(word[0])
-
+    corpus = df[columns].apply(lambda x: x.str.cat(sep=" "), axis=1).dropna().to_list()
     return TfidfVectorizer(stop_words=["None"]).fit_transform(corpus).todense()
 
 
@@ -138,6 +53,8 @@ def Passthrough(df, columns):
     # Returns list of values from columns
     return np.array(df[columns].values.tolist())
 
+
+column_sets_dict = params["column_sets_dict"]
 
 column_sets_matrix_dict = {}
 for key, value in column_sets_dict.items():
