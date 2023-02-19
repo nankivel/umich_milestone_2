@@ -45,7 +45,7 @@ def Date_Diff(df, columns):
     logging.info("Computing claim duration in days...")
     values = df[columns]
     values.insert(
-        len(values),
+        len(values.columns),
         "date_diff",
         (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D"),
     )
