@@ -82,3 +82,4 @@ for key, value in column_sets_dict.items():
 with open("data/features/feature_vectors_dictionary.pkl", "wb") as f:
     logging.info("Writing feature vectors to pickle file...")
     pickle.dump(column_sets_matrix_dict, f)
+    logging.info("Complete!")
