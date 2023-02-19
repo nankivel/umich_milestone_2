@@ -36,7 +36,7 @@ def TFIDF_Matrix(df, columns):
     # Takes in a dataframe, and a list of columns that comprise a "sentence"
     # Returns a TFIDF matrix
     corpus = df[columns].apply(lambda x: x.str.cat(sep=" "), axis=1).dropna().to_list()
-    return TfidfVectorizer(stop_words=["None"]).fit_transform(corpus).todense()
+    return TfidfVectorizer().fit_transform(corpus).todense()
 
 
 def Date_Diff(df, columns):
@@ -44,7 +44,11 @@ def Date_Diff(df, columns):
     # Returns the difference between the two dates
     logging.info("Computing claim duration in days...")
     values = df[columns]
-    values["date_diff"] = (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D")
+    values.insert(
+        len(values),
+        "date_diff",
+        (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D"),
+    )
     return np.array(values["date_diff"].values.tolist()).reshape(len(values), 1)
 
 
