@@ -7,27 +7,27 @@ stages:
       md5: 1721bad7bf4a23512ea426f6cf21415e
       size: 540434799
     - path: src/prepare.py
-      md5: 1b8f778b13346eeeff8701de5e7bf4b3
-      size: 3478
+      md5: acaada57c6badc6973a2332fa2cd7fa8
+      size: 2229
     params:
       params.yaml:
         prepare.random_seed: 42
         prepare.test_ratio: 0.2
     outs:
     - path: data/prepared
-      md5: 1d46ec24298745666fdd3ac47b708a61.dir
-      size: 136204
+      md5: 4f323dc5685fbe1b870e8f42e31744ea.dir
+      size: 136159
       nfiles: 2
   features:
-    cmd: python src/features.py data/raw/Outpatient.pkl
+    cmd: python src/features.py data/prepared/train.pkl
     deps:
-    - path: data/raw/Outpatient.pkl
-      md5: 1721bad7bf4a23512ea426f6cf21415e
-      size: 540434799
+    - path: data/prepared/train.pkl
+      md5: 27164ef701b904a1e0000cfa340be5f1
+      size: 106917
     - path: src/features.py
-      md5: fc6e74211573a30e80756af76cd56435
-      size: 2529
+      md5: dee6d264f2786eca6097fd554e39d345
+      size: 2559
     outs:
     - path: data/features/feature_vectors_dictionary.pkl
-      md5: f4a0444509dde55c2b44b17aaa21d2fc
-      size: 37085561417
+      md5: 4bc1d4f3b23cae50bdd83e6f66669cc5
+      size: 1054874
