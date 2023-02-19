@@ -95,7 +95,7 @@ except Exception as err:
 
 # Test data set split ratio
 test_ratio = params["test_ratio"]
-random_seed = random.seed(params["random_seed"])
+random_seed = params["random_seed"]
 
 try:
     logging.info(

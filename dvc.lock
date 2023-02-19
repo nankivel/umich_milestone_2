@@ -15,8 +15,8 @@ stages:
         prepare.test_ratio: 0.2
     outs:
     - path: data/prepared
-      md5: 9d28d1a9fb02142aa5a08cb0bec6c6e8.dir
-      size: 136249
+      md5: 1d46ec24298745666fdd3ac47b708a61.dir
+      size: 136204
       nfiles: 2
   features:
     cmd: python src/features.py data/raw/Outpatient.pkl
@@ -25,8 +25,8 @@ stages:
       md5: 1721bad7bf4a23512ea426f6cf21415e
       size: 540434799
     - path: src/features.py
-      md5: 8d1c0f6ef457c88f38adee1231232200
-      size: 4484
+      md5: fc6e74211573a30e80756af76cd56435
+      size: 2529
     outs:
     - path: data/features/feature_vectors_dictionary.pkl
       md5: f4a0444509dde55c2b44b17aaa21d2fc
