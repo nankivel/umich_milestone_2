@@ -23,7 +23,7 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 try:
-    logging.info("Reading input data file...")
+    logging.info(f"Reading input data file {sys.argv[1]}...")
     df_raw = pd.read_pickle(sys.argv[1])
     logging.info("Complete!")
     df_raw.dropna(subset=["CLM_PMT_AMT"], inplace=True)
