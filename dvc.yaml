@@ -11,9 +11,9 @@ stages:
     - data/prepared
 
   features:
-    cmd: python src/features.py data/raw/Outpatient.pkl
+    cmd: python src/features.py data/prepared/train.pkl
     deps: 
-      - data/raw/Outpatient.pkl
+      - data/prepared/train.pkl
       - src/features.py
     outs:
     - data/features/feature_vectors_dictionary.pkl
