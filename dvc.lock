@@ -7,27 +7,27 @@ stages:
       md5: 1721bad7bf4a23512ea426f6cf21415e
       size: 540434799
     - path: src/prepare.py
-      md5: acaada57c6badc6973a2332fa2cd7fa8
-      size: 2229
+      md5: ce3644e68658a5e026093508f1adf05d
+      size: 2268
     params:
       params.yaml:
         prepare.random_seed: 42
         prepare.test_ratio: 0.2
     outs:
     - path: data/prepared
-      md5: 4f323dc5685fbe1b870e8f42e31744ea.dir
-      size: 136159
+      md5: aed46e124b679fac63f31ddce80b4c33.dir
+      size: 543158169
       nfiles: 2
   features:
     cmd: python src/features.py data/prepared/train.pkl
     deps:
     - path: data/prepared/train.pkl
-      md5: 27164ef701b904a1e0000cfa340be5f1
-      size: 106917
+      md5: 1f79b9691cdb606277f61ac9ebc87a89
+      size: 433195114
     - path: src/features.py
       md5: dee6d264f2786eca6097fd554e39d345
       size: 2559
     outs:
     - path: data/features/feature_vectors_dictionary.pkl
-      md5: 4bc1d4f3b23cae50bdd83e6f66669cc5
-      size: 1054874
+      md5: dd20c0bb8295d33292f4d1ec8d321bec
+      size: 28577856840

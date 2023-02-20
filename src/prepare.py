@@ -26,18 +26,6 @@ try:
     logging.info(f"Reading input data file {sys.argv[1]}...")
     df_raw = pd.read_pickle(sys.argv[1])
     logging.info("Complete!")
-    df_raw.dropna(subset=["CLM_PMT_AMT"], inplace=True)
-    df_raw.dropna(subset=params_features["column_sets_dict"]["clm_dates"], inplace=True)
-    df_raw.dropna(
-        subset=params_features["column_sets_dict"]["PRDCR_CD"],
-        inplace=True,
-        how="all",
-    )
-    df_raw.dropna(
-        subset=params_features["column_sets_dict"]["HCPCS_CD"],
-        inplace=True,
-        how="all",
-    )
 except Exception as err:
     logging.info(f"Unexpected {err=}, {type(err)=}")
 
