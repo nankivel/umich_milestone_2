@@ -1,15 +1,15 @@
 import numpy as np
 import pandas as pd
-import pickle
 from sklearn.decomposition import TruncatedSVD
 import matplotlib.pyplot as plt
 from scipy.sparse import hstack
+import logging
 
-## input is a list of features from the nested dictionary that Taylor's code will spit out. The keys in this dictionary are associated with sparse matrices ##
-## If the length of the input is greater than one, the function will do an hstack with those feats and their respective sparse matrices. If not the code    ##
-## will simply take the input and run it through the SVD model to return a tuple with the matrix representation of the desired feature set along with the   ##
-## Summation of the explained variation ratio array, along with a graph to show how the components are interacting to make-up total explainability. If the  ##
-## If the hstack needs to be performed, then it will happen before the SVD model runs and render the above just the same.                                   ##
+logging.basicConfig(
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def SVD_encoder(list_features, masterfeatdict: dict, n_components: int = 2):
@@ -25,7 +25,9 @@ def SVD_encoder(list_features, masterfeatdict: dict, n_components: int = 2):
     """
 
     num_features = len(list_features)
-
+    logging.info(
+        f"Performing dimensionality reduction with {n_components} components, features: {','.join(list_features)}"
+    )
     if num_features == 1:
         stack = masterfeatdict(list_features[0])
     else:

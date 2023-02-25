@@ -3,10 +3,9 @@ import numpy as np
 import pickle
 from .dataset import get_cache_data
 import yaml
-import logging
-import sys
 import pandas as pd
 from pathlib import Path
+import logging
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -166,6 +165,4 @@ def write_feature_vectors_dict(raw_data, feature_vectors_dict_path):
         pickle.dump(column_sets_matrix_dict, f)
         logging.info("Complete!")
 
-
-if __name__ == "__main__":
-    write_feature_vectors_dict()
+    return column_sets_matrix_dict
