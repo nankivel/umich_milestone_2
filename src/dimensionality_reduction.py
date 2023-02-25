@@ -24,7 +24,7 @@ def SVD_encoder(list_features, feature_vectors_dict: str, n_components: int = 2)
         plt: matplotlib figure for visualizing explained variance
     """
 
-    num_features = len(input)
+    num_features = len(list_features)
     with open(feature_vectors_dict, "rb") as handle:
         masterfeatdict = pickle.load(handle)
 
