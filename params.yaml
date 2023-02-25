@@ -1,5 +1,4 @@
-prepare:
-  test_ratio: 0.20
+general:
   random_seed: 42
 
 features:

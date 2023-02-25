@@ -4,12 +4,17 @@ from sklearn.decomposition import TruncatedSVD
 import matplotlib.pyplot as plt
 from scipy.sparse import hstack
 import logging
+import yaml
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     level=logging.INFO,
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
+params = yaml.safe_load(open("params.yaml"))["general"]
+
+random_seed = params["random_seed"]
 
 
 def SVD_encoder(list_features, masterfeatdict: dict, n_components: int = 2):
@@ -36,7 +41,7 @@ def SVD_encoder(list_features, masterfeatdict: dict, n_components: int = 2):
             list_array.append(masterfeatdict[list_features[i]])
         stack = hstack(list_array)
 
-    svd = TruncatedSVD(n_components=n_components, random_state=42)
+    svd = TruncatedSVD(n_components=n_components, random_state=random_seed)
     result = svd.fit_transform(stack)
     explained_variance = svd.explained_variance_ratio_
     explained_variance_cumsum = np.cumsum(explained_variance)
