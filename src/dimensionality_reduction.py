@@ -12,7 +12,7 @@ from scipy.sparse import hstack
 ## If the hstack needs to be performed, then it will happen before the SVD model runs and render the above just the same.                                   ##
 
 
-def SVD_encoder(list_features, feature_vectors_dict: str, n_components: int = 2):
+def SVD_encoder(list_features, masterfeatdict: dict, n_components: int = 2):
     """
     Dimensionality reduction of the sparce matrices features
     Parameters:
@@ -25,8 +25,6 @@ def SVD_encoder(list_features, feature_vectors_dict: str, n_components: int = 2)
     """
 
     num_features = len(list_features)
-    with open(feature_vectors_dict, "rb") as handle:
-        masterfeatdict = pickle.load(handle)
 
     if num_features == 1:
         stack = masterfeatdict(list_features[0])

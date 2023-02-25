@@ -1,7 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 import pickle
-from dataset import get_cache_data
+from .dataset import get_cache_data
 import yaml
 import logging
 import sys
@@ -134,12 +134,7 @@ def Passthrough(df, columns):
     return np.nan_to_num(np.array(df[columns].values.tolist()))
 
 
-def write_feature_vectors_dict():
-    outpatient_path = (
-        Path("data").expanduser().joinpath("raw").joinpath("outpatient.pkl")
-    )
-
-    outpatient = get_cache_data("outpatient", outpatient_path)
+def write_feature_vectors_dict(raw_data, feature_vectors_dict_path):
     column_sets_dict = params["column_sets_dict"]
     column_sets_matrix_dict = {}
     for key, value in column_sets_dict.items():
@@ -153,11 +148,11 @@ def write_feature_vectors_dict():
             "HCPCS_CD",
         ]:
             logging.info(f"Generating TFIDF matrix for {key}...")
-            column_sets_matrix_dict[key] = TFIDF_Matrix(outpatient, value)
+            column_sets_matrix_dict[key] = TFIDF_Matrix(raw_data, value)
         elif key in ["clm_dates", "admit_dates"]:
-            column_sets_matrix_dict[key] = Date_Diff(outpatient, value)
+            column_sets_matrix_dict[key] = Date_Diff(raw_data, value)
         else:
-            column_sets_matrix_dict[key] = Passthrough(outpatient, value)
+            column_sets_matrix_dict[key] = Passthrough(raw_data, value)
 
     feature_vectors_dict_path = (
         Path("data")

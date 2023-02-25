@@ -1,16 +1,21 @@
+from src.dataset import get_cache_data
+from src.features import write_feature_vectors_dict
 from src.dimensionality_reduction import SVD_encoder
 from src.visualization import visualize_components3d
 import pickle
 from pathlib import Path
 
 
-list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
-feature_vectors_dict = (
+raw_data_path = Path("data").expanduser().joinpath("raw").joinpath("outpatient.pkl")
+feature_vectors_dict_path = (
     Path("data")
     .expanduser()
     .joinpath("features")
-    .joinpath("feature_vectors_dictionary-truncated.txt")
+    .joinpath("feature_vectors_dictionary-truncated.pkl")
 )
+
+list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
+
 experiments_output_path = (
     Path("data")
     .expanduser()
@@ -18,6 +23,10 @@ experiments_output_path = (
     .joinpath("dimensionality_reduction")
 )
 experiments_output_path.mkdir(parents=True, exist_ok=True)
+
+outpatient = get_cache_data("Outpatient", raw_data_path)
+
+feature_vectors_dict = write_feature_vectors_dict(outpatient, feature_vectors_dict_path)
 
 for c in range(3, 7):
     reduced, plot = SVD_encoder(list_features, feature_vectors_dict, c)
