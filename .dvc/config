@@ -1,5 +1,0 @@
-[core]
-    remote = datastore
-    autostage = true
-['remote "datastore"']
-    url = s3://umichmilestone2nyd
