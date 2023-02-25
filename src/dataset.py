@@ -6,7 +6,11 @@ import os
 import logging
 import pathlib
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def get_cache_data(dataset, local_cache_path):

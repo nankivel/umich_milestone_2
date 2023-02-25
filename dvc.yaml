@@ -1,0 +1,19 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py data/raw/Outpatient.pkl
+    deps: 
+      - data/raw/Outpatient.pkl
+      - src/prepare.py
+    params:
+    - prepare.test_ratio
+    - prepare.random_seed
+    outs:
+    - data/prepared
+
+  features:
+    cmd: python src/features.py data/prepared/train.pkl
+    deps: 
+      - data/prepared/train.pkl
+      - src/features.py
+    outs:
+    - data/features/feature_vectors_dictionary.pkl
