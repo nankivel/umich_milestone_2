@@ -4,7 +4,7 @@ import pandas as pd
 from io import StringIO
 import os
 import logging
-import pathlib
+from pathlib import Path
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -14,7 +14,7 @@ logging.basicConfig(
 
 
 def get_cache_data(dataset, local_cache_path):
-    local_cache_path = pathlib.Path(local_cache_path).expanduser()
+    local_cache_path = Path(local_cache_path).expanduser()
     if read_pickle_or_none(local_cache_path) is None:
         df = get_data(dataset)
         rows_before_merge = len(df)
@@ -97,4 +97,5 @@ def read_pickle_or_none(FILE) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    get_cache_data("Outpatient", "data/raw/outpatient.pkl")
+    raw_data_path = Path("data").expanduser().joinpath("raw").joinpath("outpatient.pkl")
+    get_cache_data("Outpatient", raw_data_path)
