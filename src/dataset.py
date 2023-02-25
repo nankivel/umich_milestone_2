@@ -5,6 +5,7 @@ from io import StringIO
 import os
 import logging
 from pathlib import Path
+from .utils import read_pickle_or_none
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -86,14 +87,6 @@ def read_from_zip(file):
     s = str(content, "utf-8")
     data = StringIO(s)
     return pd.read_csv(data, dtype=str)
-
-
-def read_pickle_or_none(FILE) -> pd.DataFrame:
-    if os.path.isfile(FILE):
-        result = pd.read_pickle(FILE)
-    else:
-        result = None
-    return result
 
 
 if __name__ == "__main__":

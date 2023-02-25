@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 import pickle
 from .dataset import get_cache_data
+from .utils import read_pickle_or_none
 import yaml
 import pandas as pd
 from pathlib import Path
@@ -98,7 +99,7 @@ def TFIDF_Matrix(df, columns):
             else:
                 corpus.append(word[0])
 
-    a = TfidfVectorizer(stop_words=["None"]).fit_transform(corpus)
+    a = TfidfVectorizer().fit_transform(corpus)
 
     return np.nan_to_num(a)
 
@@ -137,36 +138,34 @@ def Passthrough(df, columns):
 
 
 def write_feature_vectors_dict(raw_data, feature_vectors_dict_path):
-    logging.info("Generating features...")
-    column_sets_dict = params["column_sets_dict"]
-    column_sets_matrix_dict = {}
-    for key, value in column_sets_dict.items():
-        if key in [
-            "provider",
-            "NPI",
-            "admit_code",
-            "claim_discharge_code",
-            "DGNS_CD",
-            "PRDCR_CD",
-            "HCPCS_CD",
-        ]:
-            logging.info(f"Generating TFIDF matrix for {key}...")
-            column_sets_matrix_dict[key] = TFIDF_Matrix(raw_data, value)
-        elif key in ["clm_dates", "admit_dates"]:
-            column_sets_matrix_dict[key] = Date_Diff(raw_data, value)
-        else:
-            column_sets_matrix_dict[key] = Passthrough(raw_data, value)
+    if read_pickle_or_none(feature_vectors_dict_path) is None:
+        logging.info("Generating features...")
+        column_sets_dict = params["column_sets_dict"]
+        column_sets_matrix_dict = {}
+        for key, value in column_sets_dict.items():
+            if key in [
+                "provider",
+                "NPI",
+                "admit_code",
+                "claim_discharge_code",
+                "DGNS_CD",
+                "PRDCR_CD",
+                "HCPCS_CD",
+            ]:
+                logging.info(f"Generating TFIDF matrix for {key}...")
+                column_sets_matrix_dict[key] = TFIDF_Matrix(raw_data, value)
+            elif key in ["clm_dates", "admit_dates"]:
+                column_sets_matrix_dict[key] = Date_Diff(raw_data, value)
+            else:
+                column_sets_matrix_dict[key] = Passthrough(raw_data, value)
 
-    feature_vectors_dict_path = (
-        Path("data")
-        .expanduser()
-        .joinpath("features")
-        .joinpath("feature_vectors_dictionary-truncated.pkl")
-    )
-
-    with open(feature_vectors_dict_path, "wb") as f:
-        logging.info("Writing feature vectors to pickle file...")
-        pickle.dump(column_sets_matrix_dict, f)
-        logging.info("Complete!")
+        with open(feature_vectors_dict_path, "wb") as f:
+            logging.info("Writing feature vectors to pickle file...")
+            pickle.dump(column_sets_matrix_dict, f)
+            logging.info("Complete!")
+    else:
+        logging.info(f"Reading local cache file {feature_vectors_dict_path}")
+        with open(feature_vectors_dict_path, "rb") as f:
+            column_sets_matrix_dict = pickle.load(f)
 
     return column_sets_matrix_dict
