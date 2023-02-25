@@ -6,27 +6,24 @@ import pickle
 from pathlib import Path
 
 
-raw_data_path = Path("data").expanduser().joinpath("raw").joinpath("outpatient.pkl")
-feature_vectors_dict_path = (
-    Path("data")
-    .expanduser()
-    .joinpath("features")
-    .joinpath("feature_vectors_dictionary-truncated.pkl")
-)
+BASE_DATA_PATH = Path("data").expanduser()
 
-list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
+# create data subfolders if they don't already exist
+for dir in ["raw", "features", "experiments"]:
+    BASE_DATA_PATH.joinpath(dir).mkdir(parents=True, exist_ok=True)
 
-experiments_output_path = (
-    Path("data")
-    .expanduser()
-    .joinpath("experiments")
-    .joinpath("dimensionality_reduction")
+
+raw_data_path = BASE_DATA_PATH.joinpath("raw").joinpath("outpatient.pkl")
+feature_vectors_dict_path = BASE_DATA_PATH.joinpath("features").joinpath(
+    "feature_vectors_dictionary-truncated.pkl"
 )
-experiments_output_path.mkdir(parents=True, exist_ok=True)
+experiments_output_path = BASE_DATA_PATH.joinpath("experiments").joinpath(
+    "dimensionality_reduction"
+)
 
 outpatient = get_cache_data("Outpatient", raw_data_path)
-
 feature_vectors_dict = write_feature_vectors_dict(outpatient, feature_vectors_dict_path)
+list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
 
 for c in range(3, 7):
     reduced, plot = SVD_encoder(list_features, feature_vectors_dict, c)
