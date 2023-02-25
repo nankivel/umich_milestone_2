@@ -1,3 +1,4 @@
+import warnings
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 import pickle
@@ -6,6 +7,8 @@ import yaml
 import pandas as pd
 from pathlib import Path
 import logging
+
+warnings.filterwarnings("ignore", category=UserWarning)
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -58,7 +61,7 @@ def TFIDF_Matrix_len_char(df, columns, len_char):
                     word[0][:len_char]
                 )  # Add [:3] after word[0] to truncate to the first 3 characters
 
-    a = TfidfVectorizer(stop_words=["None"]).fit_transform(corpus)
+    a = TfidfVectorizer().fit_transform(corpus)
 
     return np.nan_to_num(a), np.nan_to_num(np.sum(a, axis=1))
 
@@ -134,6 +137,7 @@ def Passthrough(df, columns):
 
 
 def write_feature_vectors_dict(raw_data, feature_vectors_dict_path):
+    logging.info("Generating features...")
     column_sets_dict = params["column_sets_dict"]
     column_sets_matrix_dict = {}
     for key, value in column_sets_dict.items():

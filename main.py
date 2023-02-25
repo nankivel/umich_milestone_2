@@ -20,6 +20,7 @@ feature_vectors_dict_path = BASE_DATA_PATH.joinpath("features").joinpath(
 experiments_output_path = BASE_DATA_PATH.joinpath("experiments").joinpath(
     "dimensionality_reduction"
 )
+experiments_output_path.mkdir(parents=True, exist_ok=True)
 
 outpatient = get_cache_data("Outpatient", raw_data_path)
 feature_vectors_dict = write_feature_vectors_dict(outpatient, feature_vectors_dict_path)
@@ -30,4 +31,6 @@ for c in range(3, 7):
     plot.savefig(experiments_output_path.joinpath(f"{c}_components.png"))
     with open(experiments_output_path.joinpath(f"{c}_components.pkl"), "wb") as f:
         pickle.dump(reduced, f)
-    visualize_components3d(reduced)
+    visualize_components3d(reduced).write_html(
+        experiments_output_path.joinpath(f"{c}_components.html")
+    )
