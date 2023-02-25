@@ -26,11 +26,11 @@ outpatient = get_cache_data("Outpatient", raw_data_path)
 feature_vectors_dict = write_feature_vectors_dict(outpatient, feature_vectors_dict_path)
 list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
 
-for c in range(3, 7):
-    reduced, plot = SVD_encoder(list_features, feature_vectors_dict, c)
-    plot.savefig(experiments_output_path.joinpath(f"{c}_components.png"))
-    with open(experiments_output_path.joinpath(f"{c}_components.pkl"), "wb") as f:
-        pickle.dump(reduced, f)
-    visualize_components3d(reduced).write_html(
-        experiments_output_path.joinpath(f"{c}_components.html")
-    )
+c = 3
+reduced, plot = SVD_encoder(list_features, feature_vectors_dict, c)
+plot.savefig(experiments_output_path.joinpath(f"{c}_components.png"))
+with open(experiments_output_path.joinpath(f"{c}_components.pkl"), "wb") as f:
+    pickle.dump(reduced, f)
+visualize_components3d(reduced).write_html(
+    experiments_output_path.joinpath(f"{c}_components.html")
+)
