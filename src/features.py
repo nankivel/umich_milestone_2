@@ -15,71 +15,147 @@ logging.basicConfig(
 
 params = yaml.safe_load(open("params.yaml"))["features"]
 
-if len(sys.argv) != 2:
-    logging.info("Arguments error. Usage:\n")
-    logging.info("\tpython features.py file-training-set\n")
-    sys.exit(1)
-
-try:
-    logging.info("Reading training dataset...")
-    train = pd.read_pickle(sys.argv[1])
-    logging.info("Training dataset in memory")
-except Exception as err:
-    logging.info(f"Unexpected {err=}, {type(err)=}")
-
 
 def isnan(x):
     return x != x
 
 
-def TFIDF_Matrix(df, columns):
-    # Takes in a dataframe, and a list of columns that comprise a "sentence"
+def TFIDF_Matrix_len_char(df, columns, len_char):
+    # Takes in a dataframe, and a list of columns that comprise a "sentence" using the first three characters of each word
     # Returns a TFIDF matrix
-    corpus = df[columns].apply(lambda x: x.str.cat(sep=" "), axis=1).dropna().to_list()
-    return TfidfVectorizer().fit_transform(corpus).todense()
+
+    corpus = []
+
+    if len(columns) > 1:
+        values = df[columns].values.tolist()
+
+        for sentence in values:
+            s = ""
+            for word in sentence:
+                if len(s) == 0:
+                    if isnan(word):
+                        s = "None, "
+                    else:
+                        s = (
+                            str(word)[:len_char] + " "
+                        )  # Add [:3] after str(word) to truncate to the first 3 characters
+                else:
+                    if isnan(word):
+                        s += "None, "
+                    else:
+                        s += (
+                            str(word)[:len_char] + " "
+                        )  # Add [:3] after str(word) to truncate to the first 3 characters
+            corpus.append(s)
+
+    else:
+        values = df[columns].values.tolist()
+        for word in values:
+            if isnan(word[0]):
+                corpus.append("None")
+            else:
+                corpus.append(
+                    word[0][:len_char]
+                )  # Add [:3] after word[0] to truncate to the first 3 characters
+
+    a = TfidfVectorizer(stop_words=["None"]).fit_transform(corpus)
+
+    return np.nan_to_num(a), np.nan_to_num(np.sum(a, axis=1))
+
+
+def TFIDF_Matrix(df, columns):
+    # Takes in a dataframe, and a list of columns that comprise a "sentence" using the complete "word"
+    # Returns a TFIDF matrix
+
+    corpus = []
+
+    if len(columns) > 1:
+        values = df[columns].values.tolist()
+
+        for sentence in values:
+            s = ""
+            for word in sentence:
+                if len(s) == 0:
+                    if isnan(word):
+                        s = "None, "
+                    else:
+                        s = str(word) + " "
+                else:
+                    if isnan(word):
+                        s += "None, "
+                    else:
+                        s += str(word) + " "
+            corpus.append(s)
+
+    else:
+        values = df[columns].values.tolist()
+        for word in values:
+            if isnan(word[0]):
+                corpus.append("None")
+            else:
+                corpus.append(word[0])
+
+    a = TfidfVectorizer(stop_words=["None"]).fit_transform(corpus)
+
+    return np.nan_to_num(a)
+
+
+def Date_Year(df, columns):
+    df["year"] = pd.DatetimeIndex(df[columns[0]]).year
+
+    return np.nan_to_num(np.array(df["year"].values.tolist()).reshape(len(df), 1))
 
 
 def Date_Diff(df, columns):
     # Takes in a dataframe, and a list of columns that are a start date and end date
     # Returns the difference between the two dates
-    logging.info("Computing claim duration in days...")
+
     values = df[columns]
-    values.insert(
-        len(values.columns),
-        "date_diff",
-        (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D"),
+
+    values["date_diff"] = (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D")
+
+    return np.nan_to_num(
+        np.array(values["date_diff"].values.tolist()).reshape(len(values), 1)
+        / np.array(values["date_diff"].values.tolist())
+        .reshape(len(values), 1)
+        .max(axis=0)
     )
-    return np.array(values["date_diff"].values.tolist()).reshape(len(values), 1)
 
 
 def Passthrough(df, columns):
     # Takes in a dataframe, and a list of columns that need to be turned into a list
     # Returns list of values from columns
-    return np.array(df[columns].values.tolist())
+
+    df[columns[0]] = pd.to_numeric(df[columns[0]], errors="coerce").astype("Int64")
+
+    return np.nan_to_num(np.array(df[columns].values.tolist()))
 
 
-column_sets_dict = params["column_sets_dict"]
+def write_feature_vectors_dict():
+    column_sets_dict = params["column_sets_dict"]
+    column_sets_matrix_dict = {}
+    for key, value in column_sets_dict.items():
+        if key in [
+            "provider",
+            "NPI",
+            "admit_code",
+            "claim_discharge_code",
+            "DGNS_CD",
+            "PRDCR_CD",
+            "HCPCS_CD",
+        ]:
+            logging.info(f"Generating TFIDF matrix for {key}...")
+            column_sets_matrix_dict[key] = TFIDF_Matrix(train, value)
+        elif key in ["clm_dates", "admit_dates"]:
+            column_sets_matrix_dict[key] = Date_Diff(train, value)
+        else:
+            column_sets_matrix_dict[key] = Passthrough(train, value)
 
-column_sets_matrix_dict = {}
-for key, value in column_sets_dict.items():
-    if key in [
-        "provider",
-        "NPI",
-        "admit_code",
-        "claim_discharge_code",
-        "DGNS_CD",
-        "PRDCR_CD",
-        "HCPCS_CD",
-    ]:
-        logging.info(f"Generating TFIDF matrix for {key}...")
-        column_sets_matrix_dict[key] = TFIDF_Matrix(train, value)
-    elif key in ["clm_dates", "admit_dates"]:
-        column_sets_matrix_dict[key] = Date_Diff(train, value)
-    else:
-        column_sets_matrix_dict[key] = Passthrough(train, value)
+    with open("data/features/feature_vectors_dictionary.pkl", "wb") as f:
+        logging.info("Writing feature vectors to pickle file...")
+        pickle.dump(column_sets_matrix_dict, f)
+        logging.info("Complete!")
 
 
-with open("data/features/feature_vectors_dictionary.pkl", "wb") as f:
-    logging.info("Writing feature vectors to pickle file...")
-    pickle.dump(column_sets_matrix_dict, f)
-    logging.info("Complete!")
+if __name__ == "__main__":
+    write_feature_vectors_dict()
