@@ -6,6 +6,7 @@ import yaml
 import logging
 import sys
 import pandas as pd
+from pathlib import Path
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -109,10 +110,12 @@ def Date_Year(df, columns):
 def Date_Diff(df, columns):
     # Takes in a dataframe, and a list of columns that are a start date and end date
     # Returns the difference between the two dates
-
     values = df[columns]
-
-    values["date_diff"] = (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D")
+    values.insert(
+        len(values.columns),
+        "date_diff",
+        (df[columns[1]] - df[columns[0]]) / np.timedelta64(1, "D"),
+    )
 
     return np.nan_to_num(
         np.array(values["date_diff"].values.tolist()).reshape(len(values), 1)
@@ -132,6 +135,11 @@ def Passthrough(df, columns):
 
 
 def write_feature_vectors_dict():
+    outpatient_path = (
+        Path("data").expanduser().joinpath("raw").joinpath("outpatient.pkl")
+    )
+
+    outpatient = get_cache_data("outpatient", outpatient_path)
     column_sets_dict = params["column_sets_dict"]
     column_sets_matrix_dict = {}
     for key, value in column_sets_dict.items():
@@ -145,13 +153,20 @@ def write_feature_vectors_dict():
             "HCPCS_CD",
         ]:
             logging.info(f"Generating TFIDF matrix for {key}...")
-            column_sets_matrix_dict[key] = TFIDF_Matrix(train, value)
+            column_sets_matrix_dict[key] = TFIDF_Matrix(outpatient, value)
         elif key in ["clm_dates", "admit_dates"]:
-            column_sets_matrix_dict[key] = Date_Diff(train, value)
+            column_sets_matrix_dict[key] = Date_Diff(outpatient, value)
         else:
-            column_sets_matrix_dict[key] = Passthrough(train, value)
+            column_sets_matrix_dict[key] = Passthrough(outpatient, value)
 
-    with open("data/features/feature_vectors_dictionary.pkl", "wb") as f:
+    feature_vectors_dict_path = (
+        Path("data")
+        .expanduser()
+        .joinpath("features")
+        .joinpath("feature_vectors_dictionary-truncated.pkl")
+    )
+
+    with open(feature_vectors_dict_path, "wb") as f:
         logging.info("Writing feature vectors to pickle file...")
         pickle.dump(column_sets_matrix_dict, f)
         logging.info("Complete!")
