@@ -5,7 +5,7 @@ from src.visualization import write_dimension_reduction_viz
 from pathlib import Path
 
 
-def pipeline():
+def run_pipeline():
     # setup and paths
     BASE_DATA_PATH = Path("data").expanduser()
     path_raw, path_features, path_experiments = get_create_data_paths(BASE_DATA_PATH)
@@ -20,12 +20,14 @@ def pipeline():
     # TODO: incorporate Taylor's work without SVD here
 
     # dimensionality reduction
-    list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
-    write_dimension_reduction_viz(path_experiments, list_features, feature_vectors_dict)
+    list_features = ["DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
+    write_dimension_reduction_viz(
+        path_experiments, list_features, feature_vectors_dict, [3, 157, 482, 619]
+    )
 
     # supervised learning and prediction
     # TODO: incorporate Taylor's work with SVD here
 
 
 if __name__ == "__main__":
-    pipeline()
+    run_pipeline()

@@ -14,9 +14,9 @@ def write_dimension_reduction_viz(
     experiments_output_path,
     list_features,
     feature_vectors_dict,
-    component_range=range(3, 10),
+    list_components,
 ):
-    for c in component_range:
+    for c in list_components:
         svd_explained_variance_path = experiments_output_path.joinpath(
             f"{c}_components.png"
         )
@@ -29,6 +29,7 @@ def write_dimension_reduction_viz(
             f"Writing explained variance plots to {svd_explained_variance_path}..."
         )
         plot.savefig(svd_explained_variance_path)
+        plot.clf()
 
         logging.info(f"Writing SVD features to {svd_components_path}...")
         with open(svd_components_path, "wb") as f:
