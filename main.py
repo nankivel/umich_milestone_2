@@ -16,11 +16,15 @@ def pipeline():
     # feature extraction, initial TFIDF vectors
     feature_vectors_dict = write_feature_vectors_dict(outpatient, path_features)
 
+    # supverised learning and prediction without dimensionality reduction
+    # TODO: incorporate Taylor's work without SVD here
+
     # dimensionality reduction
     list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
     write_dimension_reduction_viz(path_experiments, list_features, feature_vectors_dict)
 
     # supervised learning and prediction
+    # TODO: incorporate Taylor's work with SVD here
 
 
 if __name__ == "__main__":
