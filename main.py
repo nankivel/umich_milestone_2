@@ -1,36 +1,27 @@
+from src.utils import get_create_data_paths
 from src.dataset import get_cache_data
 from src.features import write_feature_vectors_dict
-from src.dimensionality_reduction import SVD_encoder
-from src.visualization import visualize_components3d
-import pickle
+from src.visualization import write_dimension_reduction_viz
 from pathlib import Path
 
 
-BASE_DATA_PATH = Path("data").expanduser()
+def pipeline():
+    # setup and paths
+    BASE_DATA_PATH = Path("data").expanduser()
+    path_raw, path_features, path_experiments = get_create_data_paths(BASE_DATA_PATH)
 
-# create data subfolders if they don't already exist
-for dir in ["raw", "features", "experiments"]:
-    BASE_DATA_PATH.joinpath(dir).mkdir(parents=True, exist_ok=True)
+    # ingest and preprocess raw data
+    outpatient = get_cache_data("Outpatient", path_raw)
+
+    # feature extraction, initial TFIDF vectors
+    feature_vectors_dict = write_feature_vectors_dict(outpatient, path_features)
+
+    # dimensionality reduction
+    list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
+    write_dimension_reduction_viz(path_experiments, list_features, feature_vectors_dict)
+
+    # supervised learning and prediction
 
 
-raw_data_path = BASE_DATA_PATH.joinpath("raw").joinpath("outpatient.pkl")
-feature_vectors_dict_path = BASE_DATA_PATH.joinpath("features").joinpath(
-    "feature_vectors_dictionary-truncated.pkl"
-)
-experiments_output_path = BASE_DATA_PATH.joinpath("experiments").joinpath(
-    "dimensionality_reduction"
-)
-experiments_output_path.mkdir(parents=True, exist_ok=True)
-
-outpatient = get_cache_data("Outpatient", raw_data_path)
-feature_vectors_dict = write_feature_vectors_dict(outpatient, feature_vectors_dict_path)
-list_features = ["State", "DGNS_CD", "PRDCR_CD", "HCPCS_CD"]
-
-c = 3
-reduced, plot = SVD_encoder(list_features, feature_vectors_dict, c)
-plot.savefig(experiments_output_path.joinpath(f"{c}_components.png"))
-with open(experiments_output_path.joinpath(f"{c}_components.pkl"), "wb") as f:
-    pickle.dump(reduced, f)
-visualize_components3d(reduced).write_html(
-    experiments_output_path.joinpath(f"{c}_components.html")
-)
+if __name__ == "__main__":
+    pipeline()
