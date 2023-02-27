@@ -23,3 +23,13 @@ features:
     'HCPCS_CD_35', 'HCPCS_CD_36', 'HCPCS_CD_37', 'HCPCS_CD_38', 'HCPCS_CD_39',
     'HCPCS_CD_40', 'HCPCS_CD_41', 'HCPCS_CD_42', 'HCPCS_CD_43', 'HCPCS_CD_44',
     'HCPCS_CD_45']}
+
+  final_feature_set: [[
+    "clm_dates",
+    "SVD-DGNS_CD",
+    "SVD-HCPCS_CD",
+    "BIRTH_DATE",
+    "SEX",
+    "State",
+    "County"
+    ]]
