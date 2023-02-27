@@ -18,8 +18,12 @@ def get_create_data_paths(base_data_path):
     feature_vectors_dict_path = base_data_path.joinpath("features").joinpath(
         "feature_vectors_dictionary-truncated.pkl"
     )
+    for dir in ["dimensionality_reduction", "supervised_initial_nondr"]:
+        base_data_path.joinpath("experiments").joinpath(dir).mkdir(
+            parents=True, exist_ok=True
+        )
+
     experiments_output_path = base_data_path.joinpath("experiments").joinpath(
         "dimensionality_reduction"
     )
-    experiments_output_path.mkdir(parents=True, exist_ok=True)
     return raw_data_path, feature_vectors_dict_path, experiments_output_path

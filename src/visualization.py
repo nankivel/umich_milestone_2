@@ -18,9 +18,11 @@ def write_dimension_reduction_viz(
 ):
     for c in list_components:
         svd_explained_variance_path = experiments_output_path.joinpath(
-            f"{c}_components.png"
+            f"{c}_components_features_{'-'.join(list_features)}.png"
         )
-        svd_components_path = experiments_output_path.joinpath(f"{c}_components.pkl")
+        svd_components_path = experiments_output_path.joinpath(
+            f"{c}_components_features_{'-'.join(list_features)}.pkl"
+        )
 
         logging.info("Performing SVD dimensionality reduction...")
         reduced, plot = SVD_encoder(list_features, feature_vectors_dict, c)
@@ -36,7 +38,9 @@ def write_dimension_reduction_viz(
             pickle.dump(reduced, f)
 
         if c == 3:
-            svd_3d_html_path = experiments_output_path.joinpath(f"{c}_components.html")
+            svd_3d_html_path = experiments_output_path.joinpath(
+                f"{c}_components_features_{'-'.join(list_features)}.html"
+            )
             logging.info(
                 f"Writing HTML 3D Scatterplot of SVD components to {svd_3d_html_path}"
             )
