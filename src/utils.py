@@ -10,20 +10,13 @@ def read_pickle_or_none(FILE) -> pd.DataFrame:
     return result
 
 
-def get_create_data_paths(base_data_path):
-    for dir in ["raw", "features", "experiments"]:
-        base_data_path.joinpath(dir).mkdir(parents=True, exist_ok=True)
+def get_create_data_paths(path_base):
+    for dir in ["raw", "features", "output"]:
+        path_base.joinpath(dir).mkdir(parents=True, exist_ok=True)
 
-    raw_data_path = base_data_path.joinpath("raw").joinpath("outpatient.pkl")
-    feature_vectors_dict_path = base_data_path.joinpath("features").joinpath(
+    path_raw = path_base.joinpath("raw").joinpath("outpatient.pkl")
+    path_features = path_base.joinpath("features").joinpath(
         "feature_vectors_dictionary-truncated.pkl"
     )
-    for dir in ["dimensionality_reduction", "supervised_initial_nondr"]:
-        base_data_path.joinpath("experiments").joinpath(dir).mkdir(
-            parents=True, exist_ok=True
-        )
-
-    experiments_output_path = base_data_path.joinpath("experiments").joinpath(
-        "dimensionality_reduction"
-    )
-    return raw_data_path, feature_vectors_dict_path, experiments_output_path
+    path_output = path_base.joinpath("output")
+    return path_raw, path_features, path_output

@@ -34,7 +34,7 @@ def SVD_encoder(list_features, masterfeatdict: dict, n_components: int = 2):
         f"Performing dimensionality reduction with {n_components} components, features: {','.join(list_features)}"
     )
     if num_features == 1:
-        stack = masterfeatdict(list_features[0])
+        stack = masterfeatdict[list_features[0]]
     else:
         list_array = []
         for i in range(0, num_features):
