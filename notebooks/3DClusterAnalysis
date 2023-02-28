@@ -56,9 +56,9 @@ def ClusterModel(inp,x,k):
 
     model = KMeans(n_clusters=k)
 
-    model.fit(k[0])
+    model.fit(pca)
 
-    preds = pd.DataFrame(model.predict(k[0]))
+    preds = pd.DataFrame(model.predict(pca))
     preds.columns = ['preds']
     
     alldata = pd.merge(data,preds,left_index=True,right_index=True)
