@@ -1,0 +1,69 @@
+def PCA_encoder(input,x):
+    with open('feature_vectors_dictionary-truncated.txt', 'rb') as handle:
+        masterfeatdict = pickle.load(handle)
+    if len(input) == 4:
+        a = masterfeatdict[input[0]]
+        b = masterfeatdict[input[1]]
+        c = masterfeatdict[input[2]]
+        d = masterfeatdict[input[3]]
+        stack = hstack([a,b,c,d])
+    elif len(input) == 3:
+        a = masterfeatdict[input[0]]
+        b = masterfeatdict[input[1]]
+        c = masterfeatdict[input[2]]
+        stack = hstack([a,b,c])
+    elif len(input) == 2:
+        a = masterfeatdict[input[0]]
+        b = masterfeatdict[input[1]]
+        stack = hstack([a,b])
+    else:
+        stack = masterfeatdict[input[0]]
+
+
+    encodedfeats = TruncatedSVD(n_components=x)
+
+    encodedfeats_fit = encodedfeats.fit_transform(stack)
+
+    exp_var_pca  = encodedfeats.explained_variance_ratio_
+
+    cum_sum_eigenvalues = np.cumsum(exp_var_pca)
+#   
+    
+# Create the visualization plot
+#
+    plt.bar(range(0,len(exp_var_pca)), exp_var_pca, alpha=0.5, align='center', label='Individual explained variance')
+    plt.step(range(0,len(cum_sum_eigenvalues)), cum_sum_eigenvalues, where='mid',label='Cumulative explained variance')
+    plt.ylabel('Explained variance ratio')
+    plt.xlabel('Principal components')
+    plt.legend(loc='best')
+    plt.tight_layout()
+    plt.show()
+    
+    return encodedfeats_fit,exp_var_pca.sum()
+
+
+### input is 3 features from dataset and k is number of clusters ###
+
+def ClusterModel(inp,x,k):
+    
+    pca = PCA_encoder(inp,x)
+
+    pca = pca[0]
+
+    data = pd.DataFrame(pca)
+
+    data.columns = ['One','Two','Three']
+
+    model = KMeans(n_clusters=k)
+
+    model.fit(k[0])
+
+    preds = pd.DataFrame(model.predict(k[0]))
+    preds.columns = ['preds']
+    
+    alldata = pd.merge(data,preds,left_index=True,right_index=True)
+    alldata = alldata.sample(100000)
+    fig = px.scatter_3d(alldata, x='One', y='Two', z='Three',
+              color='preds')
+    #fig.show()
+    py.offline.plot(fig,validate = False,filename = '3DCluster.html')
